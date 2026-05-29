@@ -26,6 +26,7 @@
         name: "{{ dockerhub_username }}/hello-world"
         tag: latest
         source: pull
+        force_tag: true
 
     - name: Run hello-world container
       community.docker.docker_container:
@@ -33,5 +34,6 @@
         image: "{{ dockerhub_username }}/hello-world:latest"
         state: started
         restart_policy: always
+        recreate: true
         ports:
           - "80:80"
