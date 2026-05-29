@@ -21,6 +21,13 @@
         groups: docker
         append: true
 
+    - name: Remove old image
+      community.docker.docker_image:
+        name: "{{ dockerhub_username }}/hello-world"
+        tag: latest
+        state: absent
+        force_absent: true
+
     - name: Pull hello-world image
       community.docker.docker_image:
         name: "{{ dockerhub_username }}/hello-world"
