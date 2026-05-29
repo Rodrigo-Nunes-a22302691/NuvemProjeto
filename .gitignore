@@ -1,0 +1,14 @@
+# IDE
+.idea/
+*.iml
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+*.pem
+.terraform.lock.hcl
+.env
+node_modules/
+target/
