@@ -38,6 +38,7 @@ jobs:
         with:
           context: ./services/hello-world
           push: true
+          no-cache: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-world:latest
 
   deploy:
