@@ -30,7 +30,8 @@ services:
           memory: 384M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-      - SPRING_AUTOCONFIGURE_EXCLUDE=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+      - SPRING_KAFKA_LISTENER_AUTO_STARTUP=false
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
