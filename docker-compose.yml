@@ -5,7 +5,12 @@ services:
     image: ${DOCKERHUB_USERNAME}/user-service:latest
     ports:
       - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     environment:
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -19,7 +24,12 @@ services:
     image: ${DOCKERHUB_USERNAME}/product-service:latest
     ports:
       - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     environment:
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -36,7 +46,12 @@ services:
     image: ${DOCKERHUB_USERNAME}/order-service:latest
     ports:
       - "8083:8083"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     environment:
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -55,6 +70,10 @@ services:
     image: ${DOCKERHUB_USERNAME}/api-gateway:latest
     ports:
       - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     depends_on:
       - user-service
       - product-service
