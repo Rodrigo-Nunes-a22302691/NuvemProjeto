@@ -48,3 +48,11 @@ module "db" {
   db_password = "nuno2013"
   db_username = "dbadmin"
 }
+
+module "sqs" {
+  source = "./modules/sqs"
+
+  project     = "microservices-project"
+  environment = "dev"
+  queue_name  = "order-created"
+}
