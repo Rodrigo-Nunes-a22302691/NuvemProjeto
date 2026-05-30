@@ -30,7 +30,7 @@ jobs:
       - name: Run tests for ${{ matrix.service }}
         run: |
           cd services/${{ matrix.service }}
-          mvn test -B
+          mvn test -B -e 2>&1 | tail -100
 
   terraform:
     runs-on: ubuntu-latest
