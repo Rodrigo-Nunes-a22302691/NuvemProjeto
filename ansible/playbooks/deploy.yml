@@ -21,10 +21,18 @@
         groups: docker
         append: true
 
+    - name: Create Docker CLI plugins directory
+      file:
+        path: /usr/local/lib/docker/cli-plugins
+        state: directory
+        mode: '0755'
+
     - name: Install Docker Compose plugin
-      dnf:
-        name: docker-compose-plugin
-        state: present
+      get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+        dest: /usr/local/lib/docker/cli-plugins/docker-compose
+        mode: '0755'
+      become: true
 
     - name: Create app directory
       file:
