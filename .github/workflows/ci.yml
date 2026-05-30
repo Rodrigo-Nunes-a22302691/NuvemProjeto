@@ -51,6 +51,12 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=infrastructure/terraform init
 
+      - name: Terraform validate
+        run: terraform -chdir=infrastructure/terraform validate
+
+      - name: Terraform fmt check
+        run: terraform -chdir=infrastructure/terraform fmt -check
+
       - name: Terraform Plan
         run: terraform -chdir=infrastructure/terraform plan
 
@@ -113,8 +119,8 @@ jobs:
 
       - name: Update inventory with EC2 IP
         run: |
-          sed -i 's/ansible_host: .*/ansible_host: ${{ secrets.EC2_HOST }}/' ansible/inventory/hosts.yml
-          sed -i 's|ansible_ssh_private_key_file: .*|ansible_ssh_private_key_file: ~/.ssh/deploy_key.pem|' ansible/inventory/hosts.yml
+          sed -i "s/ansible_host: .*/ansible_host: ${{ secrets.EC2_HOST }}/" ansible/inventory/hosts.yml
+          sed -i "s|ansible_ssh_private_key_file: .*|ansible_ssh_private_key_file: ~/.ssh/deploy_key.pem|" ansible/inventory/hosts.yml
 
       - name: Run Ansible playbook
         run: |
