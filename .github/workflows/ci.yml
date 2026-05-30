@@ -63,7 +63,7 @@ jobs:
 
       - name: Update inventory with EC2 IP
         run: |
-          sed -i 's/ansible_host: .*/ansible_host: 54.154.143.88/' ansible/inventory/hosts.yml
+          sed -i 's/ansible_host: .*/ansible_host: 54.154.211.59/' ansible/inventory/hosts.yml
           sed -i 's|ansible_ssh_private_key_file: .*|ansible_ssh_private_key_file: ~/.ssh/deploy_key.pem|' ansible/inventory/hosts.yml
 
       - name: Run Ansible playbook
