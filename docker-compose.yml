@@ -51,7 +51,7 @@ services:
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_KAFKA_LISTENER_AUTO_STARTUP=false
+      - SPRING_KAFKA_LISTENER_AUTO_STARTUP=true
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
