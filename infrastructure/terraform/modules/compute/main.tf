@@ -7,7 +7,7 @@ resource "aws_instance" "app" {
   key_name               = var.key_name
   iam_instance_profile   = aws_iam_instance_profile.ec2.name
 
-  # Disco da instancia, para ter acerteza 20 GBs
+  # Disco da instancia
   root_block_device {
     volume_size = 20
     volume_type = "gp3"
@@ -69,8 +69,21 @@ resource "aws_iam_role_policy" "sqs" {
   })
 }
 
-# Instance Profile — liga o role à EC2
+# Instance Profile
 resource "aws_iam_instance_profile" "ec2" {
   name = "${var.project}-${var.environment}-ec2-profile"
   role = aws_iam_role.ec2.name
+}
+
+# Elastic IP
+resource "aws_eip" "app" {
+  instance = aws_instance.app.id
+  domain   = "vpc"
+
+  tags = {
+    Name        = "${var.project}-${var.environment}-eip"
+    Project     = var.project
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
 }
