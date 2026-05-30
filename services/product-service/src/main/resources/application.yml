@@ -27,7 +27,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.type.mapping: orderCreated:pt.ulusofona.productservice.event.OrderCreatedEvent
+        spring.json.type.mapping: pt.ulusofona.orderservice.event.OrderCreatedEvent:pt.ulusofona.productservice.event.OrderCreatedEvent
 
 server:
   port: 8082
