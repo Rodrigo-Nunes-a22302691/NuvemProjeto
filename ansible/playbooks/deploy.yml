@@ -1,5 +1,5 @@
 ---
-- name: Deploy hello-world container
+- name: Deploy microservices
   hosts: ec2
   become: true
 
@@ -21,26 +21,48 @@
         groups: docker
         append: true
 
-    - name: Remove old image
-      community.docker.docker_image:
-        name: "{{ dockerhub_username }}/hello-world"
-        tag: latest
-        state: absent
-        force_absent: true
+    - name: Install Docker Compose plugin
+      dnf:
+        name: docker-compose-plugin
+        state: present
 
-    - name: Pull hello-world image
-      community.docker.docker_image:
-        name: "{{ dockerhub_username }}/hello-world"
-        tag: latest
-        source: pull
-        force_tag: true
+    - name: Create app directory
+      file:
+        path: /app
+        state: directory
+        owner: ec2-user
+        mode: '0755'
 
-    - name: Run hello-world container
-      community.docker.docker_container:
-        name: hello-world
-        image: "{{ dockerhub_username }}/hello-world:latest"
-        state: started
-        restart_policy: always
-        recreate: true
-        ports:
-          - "80:80"
+    - name: Copy docker-compose.yml
+      copy:
+        src: ../../docker-compose.yml
+        dest: /app/docker-compose.yml
+        owner: ec2-user
+
+    - name: Create .env file
+      copy:
+        dest: /app/.env
+        content: |
+          DOCKERHUB_USERNAME={{ dockerhub_username }}
+          DB_HOST={{ db_host }}
+          DB_USERNAME={{ db_username }}
+          DB_PASSWORD={{ db_password }}
+          SQS_QUEUE_URL={{ sqs_queue_url }}
+        owner: ec2-user
+        mode: '0600'
+
+    - name: Remove old images
+      community.docker.docker_prune:
+        images: true
+        images_filters:
+          dangling: false
+
+    - name: Pull latest images
+      community.docker.docker_compose_v2_pull:
+        project_src: /app
+
+    - name: Deploy with docker compose
+      community.docker.docker_compose_v2:
+        project_src: /app
+        state: present
+        recreate: always

@@ -1,71 +1,58 @@
-# Docker Compose Configuration
-
 version: '3.8'
 
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-    networks:
-      - microservices-network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    ports:
-      - "9092:9092"
-    networks:
-      - microservices-network
-
   user-service:
-    build: ./services/user-service
+    image: ${DOCKERHUB_USERNAME}/user-service:latest
     ports:
       - "8081:8081"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - kafka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
     networks:
       - microservices-network
 
   product-service:
-    build: ./services/product-service
+    image: ${DOCKERHUB_USERNAME}/product-service:latest
     ports:
       - "8082:8082"
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-    depends_on:
-      - kafka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - CLOUD_SQS_PRODUCT_EVENTS_ENABLED=true
+      - CLOUD_SQS_PRODUCT_EVENTS_QUEUE_URL=${SQS_QUEUE_URL}
+      - CLOUD_SQS_PRODUCT_EVENTS_REGION=eu-west-1
     networks:
       - microservices-network
 
   order-service:
-    build: ./services/order-service
+    image: ${DOCKERHUB_USERNAME}/order-service:latest
     ports:
       - "8083:8083"
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - SERVICES_USER_URL=http://user-service:8081
       - SERVICES_PRODUCT_URL=http://product-service:8082
-    depends_on:
-      - kafka
-      - user-service
-      - product-service
+      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_ENABLED=true
+      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_QUEUE_URL=${SQS_QUEUE_URL}
+      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_REGION=eu-west-1
     networks:
       - microservices-network
 
   api-gateway:
-    build: ./services/api-gateway
+    image: ${DOCKERHUB_USERNAME}/api-gateway:latest
     ports:
       - "8080:8080"
     depends_on:
