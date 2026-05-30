@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - microservices-network
+
   user-service:
     image: ${DOCKERHUB_USERNAME}/user-service:latest
     ports:
@@ -30,7 +50,7 @@ services:
           memory: 384M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SPRING_KAFKA_LISTENER_AUTO_STARTUP=false
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -41,6 +61,8 @@ services:
       - CLOUD_SQS_PRODUCT_EVENTS_ENABLED=true
       - CLOUD_SQS_PRODUCT_EVENTS_QUEUE_URL=${SQS_QUEUE_URL}
       - CLOUD_SQS_PRODUCT_EVENTS_REGION=eu-west-1
+    depends_on:
+      - kafka
     networks:
       - microservices-network
 
@@ -54,7 +76,7 @@ services:
           memory: 384M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-      - SPRING_AUTOCONFIGURE_EXCLUDE=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -66,6 +88,10 @@ services:
       - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_ENABLED=true
       - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_QUEUE_URL=${SQS_QUEUE_URL}
       - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_REGION=eu-west-1
+    depends_on:
+      - kafka
+      - user-service
+      - product-service
     networks:
       - microservices-network
 
