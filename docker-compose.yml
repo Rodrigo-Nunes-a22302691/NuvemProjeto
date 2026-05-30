@@ -18,6 +18,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
     networks:
       - microservices-network
 
@@ -62,7 +67,8 @@ services:
       - CLOUD_SQS_PRODUCT_EVENTS_QUEUE_URL=${SQS_QUEUE_URL}
       - CLOUD_SQS_PRODUCT_EVENTS_REGION=eu-west-1
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     networks:
       - microservices-network
 
