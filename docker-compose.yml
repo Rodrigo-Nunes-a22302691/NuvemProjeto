@@ -44,11 +44,6 @@ services:
       - "8082:8082"
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - CLOUD_SQS_PRODUCT_EVENTS_ENABLED=false
-      - CLOUD_SQS_PRODUCT_EVENTS_QUEUE_URL=https://sqs.eu-west-1.amazonaws.com/904619734225/cn-course-product-events-cli
-      - CLOUD_SQS_PRODUCT_EVENTS_REGION=eu-west-1
-      - AWS_ACCESS_KEY_ID=AKIA5FH4JWTI6BZRPJEP
-      - AWS_SECRET_ACCESS_KEY=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
     depends_on:
       - kafka
     networks:
@@ -62,11 +57,6 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SERVICES_USER_URL=http://user-service:8081
       - SERVICES_PRODUCT_URL=http://product-service:8082
-      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_ENABLED=false
-      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_QUEUE_URL=https://sqs.eu-west-1.amazonaws.com/904619734225/cn-course-product-events-cli
-      - CLOUD_SQS_PRODUCT_EVENTS_CONSUMER_REGION=eu-west-1
-      - AWS_ACCESS_KEY_ID=AKIA5FH4JWTI6BZRPJEP
-      - AWS_SECRET_ACCESS_KEY=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
     depends_on:
       - kafka
       - user-service
