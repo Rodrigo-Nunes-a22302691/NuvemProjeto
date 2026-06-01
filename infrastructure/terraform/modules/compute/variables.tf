@@ -26,7 +26,7 @@ variable "sg_id" {
 variable "instance_type" {
   description = "Tipo de instância EC2"
   type        = string
-  default     = "t3.small"
+  default     = "t3.medium"
 }
 
 variable "ami_id" {
