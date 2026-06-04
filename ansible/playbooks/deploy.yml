@@ -4,6 +4,7 @@
   become: true
 
   tasks:
+    # Docker
     - name: Install Docker
       dnf:
         name: docker
@@ -34,11 +35,27 @@
         mode: '0755'
       become: true
 
+
+
+
+
+
+
+
+    # PostgreSQL
     - name: Install PostgreSQL client
       dnf:
         name: postgresql15
         state: present
 
+
+
+
+
+
+
+
+    # Criar diretorio para as apps
     - name: Create app directory
       file:
         path: /app
@@ -46,6 +63,15 @@
         owner: ec2-user
         mode: '0755'
 
+
+
+
+
+
+
+
+    # Copia o docker-compose.yml e o .env para a EC2
+    # Remove imagens antigas, faz pull das novas e recria os containers
     - name: Copy docker-compose.yml
       copy:
         src: ../../docker-compose.yml

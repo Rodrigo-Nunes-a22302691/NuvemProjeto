@@ -1,3 +1,11 @@
+# Criacao das SQS para que o possam comunicar
+
+
+
+
+
+
+
 # Dead Letter Queue
 resource "aws_sqs_queue" "dlq" {
   name = "${var.project}-${var.environment}-${var.queue_name}-dlq"

@@ -1,3 +1,13 @@
+# Cria a instancia que ira ter os microserviços
+# A IAM role e as policies
+# E um elastic IP para nao mudar o ip da istancia
+
+
+
+
+
+
+
 # EC2 Instance
 resource "aws_instance" "app" {
   ami                    = var.ami_id
@@ -21,6 +31,14 @@ resource "aws_instance" "app" {
   }
 }
 
+
+
+
+
+
+
+
+# IAM Role e as policies
 # IAM Role para a EC2
 resource "aws_iam_role" "ec2" {
   name = "${var.project}-${var.environment}-ec2-role"
@@ -75,6 +93,14 @@ resource "aws_iam_instance_profile" "ec2" {
   role = aws_iam_role.ec2.name
 }
 
+
+
+
+
+
+
+
+# Para nao mudar o ip da instancia caso alteraçoes sejam feitas
 # Elastic IP
 resource "aws_eip" "app" {
   instance = aws_instance.app.id

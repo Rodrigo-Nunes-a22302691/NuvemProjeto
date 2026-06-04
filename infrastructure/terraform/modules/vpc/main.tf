@@ -1,3 +1,17 @@
+# Criacao de toda a estrutura da VPC,
+# VPC
+# A internet gateAway para poder comunicar com a internet
+# As subnets dentro da VPC, uma publica outra privada
+# Configuraçao da route table, para depois associar a internet gateAway
+# E por fim os SG, para depois as instancias herdarem
+
+
+
+
+
+
+
+
 # VPC
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
@@ -12,6 +26,14 @@ resource "aws_vpc" "main" {
   }
 }
 
+
+
+
+
+
+
+
+
 # Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
@@ -24,6 +46,15 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
+
+
+
+
+
+
+
+
+# Subnets
 # Subnet pública
 resource "aws_subnet" "public" {
   count                   = length(var.public_subnet_cidrs)
@@ -40,6 +71,7 @@ resource "aws_subnet" "public" {
   }
 }
 
+
 # Subnet privada
 resource "aws_subnet" "private" {
   count             = length(var.private_subnet_cidrs)
@@ -55,6 +87,15 @@ resource "aws_subnet" "private" {
   }
 }
 
+
+
+
+
+
+
+
+
+# Route table
 # Route table pública
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
@@ -72,6 +113,7 @@ resource "aws_route_table" "public" {
   }
 }
 
+
 # Associar subnet pública à route table
 resource "aws_route_table_association" "public" {
   count          = length(aws_subnet.public)
@@ -79,6 +121,14 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
+
+
+
+
+
+
+
+# Security Groups
 # Security Group: web (EC2)
 resource "aws_security_group" "web" {
   name        = "${var.project}-${var.environment}-sg-web"
@@ -131,6 +181,7 @@ resource "aws_security_group" "web" {
     ManagedBy   = "terraform"
   }
 }
+
 
 # Security Group: db (RDS)
 resource "aws_security_group" "db" {

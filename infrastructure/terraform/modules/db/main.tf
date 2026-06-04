@@ -1,4 +1,13 @@
-# Subnet
+# Criacao da base de dados
+
+
+
+
+
+
+
+
+# Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "${var.project}-${var.environment}-db-subnet-group"
   subnet_ids = var.subnet_ids

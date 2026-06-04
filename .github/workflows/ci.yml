@@ -32,6 +32,14 @@ jobs:
           cd services/${{ matrix.service }}
           mvn test -B -e 2>&1 | tail -100
 
+
+
+
+
+
+
+
+
   terraform:
     runs-on: ubuntu-latest
     needs: test
@@ -64,6 +72,13 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: terraform -chdir=infrastructure/terraform apply -auto-approve
 
+
+
+
+
+
+
+
   build:
     runs-on: ubuntu-latest
     needs: terraform
@@ -94,7 +109,18 @@ jobs:
           context: ./services/${{ matrix.service }}
           push: true
           no-cache: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.sha }}
+          
+
+
+
+
+
+
+
+
 
   deploy:
     runs-on: ubuntu-latest
