@@ -87,11 +87,6 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=infrastructure/terraform init
 
-      - name: Select Terraform workspace
-        run: |
-          terraform -chdir=infrastructure/terraform workspace select ${{ vars.ENVIRONMENT }} || \
-          terraform -chdir=infrastructure/terraform workspace new ${{ vars.ENVIRONMENT }}
-
       - name: Terraform validate
         run: terraform -chdir=infrastructure/terraform validate
 
