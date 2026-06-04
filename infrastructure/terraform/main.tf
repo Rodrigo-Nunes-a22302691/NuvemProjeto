@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket         = "microservices-project-tf-state-eu-west-1"
-    key            = "envs/dev/terraform.tfstate"
+    key            = "terraform.tfstate"
     region         = "eu-west-1"
     dynamodb_table = "microservices-project-tf-locks"
     encrypt        = true
@@ -23,14 +23,14 @@ module "vpc" {
   source = "./modules/vpc"
 
   project     = "microservices-project"
-  environment = "dev"
+  environment = terraform.workspace
 }
 
 module "compute" {
   source = "./modules/compute"
 
   project     = "microservices-project"
-  environment = "dev"
+  environment = terraform.workspace
   vpc_id      = module.vpc.vpc_id
   subnet_id   = module.vpc.public_subnet_ids[0]
   sg_id       = module.vpc.sg_web_id
@@ -41,7 +41,7 @@ module "db" {
   source = "./modules/db"
 
   project     = "microservices-project"
-  environment = "dev"
+  environment = terraform.workspace
   vpc_id      = module.vpc.vpc_id
   subnet_ids  = module.vpc.private_subnet_ids
   sg_id       = module.vpc.sg_db_id
@@ -53,6 +53,6 @@ module "sqs" {
   source = "./modules/sqs"
 
   project     = "microservices-project"
-  environment = "dev"
+  environment = terraform.workspace
   queue_name  = "order-created"
 }
