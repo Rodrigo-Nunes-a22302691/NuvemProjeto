@@ -42,11 +42,11 @@ graph TB
 
 ### Compute
 
-| Componente | Tipo | Descrição |
-|---|---|---|
-| EC2 | t3.small | Corre todos os containers |
+| Componente | Tipo          | Descrição |
+|---|---------------|---|
+| EC2 | t3.medium     | Corre todos os containers |
 | Elastic IP | 108.132.51.92 | IP fixo |
-| IAM Role | ec2-role | Permissões SQS |
+| IAM Role | ec2-role      | Permissões SQS |
 
 ### Base de Dados
 
@@ -66,3 +66,10 @@ graph TB
 ## Fluxos de Comunicação
 
 ### Fluxo Síncrono (HTTP)
+Cliente → API Gateway → User/Product/Order Service → RDS
+
+### Fluxo Assíncrono — Kafka
+Order criada → order-service publica OrderCreatedEvent → Kafka → product-service consome → diminui stock no RDS
+
+### Fluxo Assíncrono — SQS
+Produto criado → product-service publica ProductCreatedEvent → SQS → order-service consome → regista produto disponível
