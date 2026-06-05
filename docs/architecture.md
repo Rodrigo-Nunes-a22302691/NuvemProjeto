@@ -4,7 +4,7 @@
 
 ```mermaid
 graph TB
-    Internet([Internet]) --> EIP[Elastic IP\n108.132.51.92]
+    Internet([Internet]) --> EIP[Elastic IP]
     EIP --> GW[API Gateway\n:8080]
     
     GW -->|/api/users/**| US[User Service\n:8081]
