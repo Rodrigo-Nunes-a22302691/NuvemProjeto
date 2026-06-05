@@ -73,3 +73,8 @@ output "sqs_queue_url" {
   description = "URL da fila SQS"
   value       = module.sqs.queue_url
 }
+
+output "elastic_ip" {
+  description = "IP público fixo da EC2"
+  value       = module.compute.elastic_ip
+}

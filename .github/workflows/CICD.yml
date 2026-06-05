@@ -74,6 +74,7 @@ jobs:
     outputs:
       db_host: ${{ steps.tf_outputs.outputs.db_host }}
       sqs_url: ${{ steps.tf_outputs.outputs.sqs_url }}
+      elastic_ip: ${{ steps.tf_outputs.outputs.elastic_ip }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -109,6 +110,7 @@ jobs:
         run: |
           echo "db_host=$(terraform -chdir=infrastructure/terraform output -raw db_endpoint)" >> $GITHUB_OUTPUT
           echo "sqs_url=$(terraform -chdir=infrastructure/terraform output -raw sqs_queue_url)" >> $GITHUB_OUTPUT
+          echo "elastic_ip=$(terraform -chdir=infrastructure/terraform output -raw elastic_ip)" >> $GITHUB_OUTPUT
 
 
 
@@ -184,7 +186,7 @@ jobs:
 
       - name: Update inventory with EC2 IP
         run: |
-          sed -i 's/ansible_host: .*/ansible_host: ${{ secrets.EC2_HOST }}/' ansible/inventory/hosts.yml
+          sed -i 's/ansible_host: .*/ansible_host: ${{ needs.terraform.outputs.elastic_ip }}/' ansible/inventory/hosts.yml
           sed -i 's|ansible_ssh_private_key_file: .*|ansible_ssh_private_key_file: ~/.ssh/deploy_key.pem|' ansible/inventory/hosts.yml
 
       - name: Run Ansible playbook
