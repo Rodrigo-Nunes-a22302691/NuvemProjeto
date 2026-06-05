@@ -2,7 +2,12 @@
 
 ## Deploy Automático
 
-O deploy é totalmente automatizado via GitHub Actions. Basta fazer push para `main`, e ser aprovado por um reviewer:
+O deploy é totalmente automatizado via GitHub Actions. 
+
+Basta simplesmente configurar os github secrets
+
+
+E depois fazer push para `main`, e ser aprovado por um reviewer:
 
 ```bash
 git push origin main

@@ -1,31 +1,18 @@
-# Configuração do Projeto
+O deploy é totalmente automatizado via GitHub Actions.
 
-## Pré-requisitos
+### Pré-requisitos manuais (só uma vez)
 
-- Conta AWS com acesso programático
-- Terraform >= 1.0
-- Docker + Docker Compose
-- Ansible
-- Java 21
-- Maven
+Antes de começar, é necessário criar manualmente na AWS:
 
-## Configuração Inicial (Manual — só uma vez)
-
-### 1 — Criar o S3 bucket para o Terraform state
-
+1. **S3 bucket** para o Terraform state:
 ```bash
 aws s3api create-bucket \
   --bucket microservices-project-tf-state-eu-west-1 \
   --region eu-west-1 \
   --create-bucket-configuration LocationConstraint=eu-west-1
-
-aws s3api put-bucket-versioning \
-  --bucket microservices-project-tf-state-eu-west-1 \
-  --versioning-configuration Status=Enabled
 ```
 
-### 2 — Criar a tabela DynamoDB para o state lock
-
+2. **DynamoDB table** para o state lock:
 ```bash
 aws dynamodb create-table \
   --table-name microservices-project-tf-locks \
@@ -35,19 +22,21 @@ aws dynamodb create-table \
   --region eu-west-1
 ```
 
-### 3 — Criar o role IAM para o GitHub Actions (OIDC)
+3. **Key Pair SSH** no AWS Console → EC2 → Key Pairs → criar `microservices-project-dev-key` e guardar o ficheiro `.pem`
 
-No AWS Console → IAM → Roles → criar role `gha-deployer` com:
-- Trust policy para GitHub Actions OIDC
-- Policies: AmazonEC2FullAccess, AmazonRDSFullAccess, AmazonS3FullAccess, AmazonSQSFullAccess, AmazonDynamoDBFullAccess, IAMFullAccess
+4. **IAM Role `gha-deployer`** no AWS Console → IAM → Roles → criar role com trust policy para GitHub Actions OIDC e as seguintes policies:
+    - `AmazonEC2FullAccess`
+    - `AmazonRDSFullAccess`
+    - `AmazonS3FullAccess`
+    - `AmazonSQSFullAccess`
+    - `AmazonDynamoDBFullAccess`
+    - `IAMFullAccess`
 
-### 4 — Criar Key Pair para SSH
+---
 
-No AWS Console → EC2 → Key Pairs → criar `microservices-project-dev-key`
+### Configurar os GitHub Secrets
 
-## Configuração do GitHub
-
-### Secrets necessários
+No repositório → **Settings** → **Secrets** → **Actions**:
 
 | Secret | Descrição |
 |---|---|
@@ -55,19 +44,15 @@ No AWS Console → EC2 → Key Pairs → criar `microservices-project-dev-key`
 | `DOCKERHUB_USERNAME` | Username do Docker Hub |
 | `DOCKERHUB_TOKEN` | Token de acesso do Docker Hub |
 | `EC2_SSH_PRIVATE_KEY` | Conteúdo do ficheiro `.pem` |
-| `EC2_HOST` | IP público da EC2 (Elastic IP) |
-| `DB_HOST` | Endpoint do RDS |
-| `DB_USERNAME` | Username da base de dados |
+| `DB_USERNAME` | Username da base de dados (ex: `dbadmin`) |
 | `DB_PASSWORD` | Password da base de dados |
-| `SQS_QUEUE_URL` | URL da fila SQS |
 
-## Deploy da Infraestrutura
+---
 
-```bash
-cd infrastructure/terraform
-terraform init
-terraform workspace new dev
-terraform workspace select dev
-terraform apply
+### Deploy
+
+Basta fazer push para `main` e ser aprovado por um reviewer — o pipeline CI/CD trata de tudo automaticamente:
+
 ```
-Ou um commit para o `main` o pipeline CI/CD trata da infraestrutura automaticamente.
+gitleaks → test → terraform apply → build → deploy
+```

@@ -42,17 +42,17 @@ graph TB
 
 ### Compute
 
-| Componente | Tipo          | Descrição |
-|---|---------------|---|
-| EC2 | t3.medium     | Corre todos os containers |
-| Elastic IP | 108.132.51.92 | IP fixo |
-| IAM Role | ec2-role      | Permissões SQS |
+| Componente | Tipo      | Descrição |
+|---|-----------|---|
+| EC2 | t3.medium | Corre todos os containers |
+| Elastic IP | Dinamico  | IP fixo |
+| IAM Role | ec2-role  | Permissões SQS |
 
 ### Base de Dados
 
 | Componente | Tipo | Descrição |
 |---|---|---|
-| RDS | PostgreSQL 16 | db.t3.micro |
+| RDS | PostgreSQL | db.t3.micro |
 | Tabelas | users, products, orders, order_items | Criadas automaticamente pelo Hibernate |
 
 ### Mensageria
