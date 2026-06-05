@@ -90,6 +90,13 @@
         owner: ec2-user
         mode: '0600'
 
+    - name: Stop and remove containers and volumes
+      community.docker.docker_compose_v2:
+        project_src: /app
+        state: absent
+        remove_volumes: true
+      ignore_errors: true
+
     - name: Remove old images
       community.docker.docker_prune:
         images: true
