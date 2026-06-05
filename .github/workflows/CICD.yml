@@ -70,7 +70,7 @@ jobs:
 
   terraform:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [gitleaks, test]
     outputs:
       db_host: ${{ steps.tf_outputs.outputs.db_host }}
       sqs_url: ${{ steps.tf_outputs.outputs.sqs_url }}
@@ -121,7 +121,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: terraform
+    needs: [gitleaks, test, terraform]
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:

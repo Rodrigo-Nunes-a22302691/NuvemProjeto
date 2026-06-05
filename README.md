@@ -28,7 +28,7 @@ Quatro microserviços Spring Boot a comunicar via HTTP (Feign) e mensagens assí
 
 ### Pré-requisitos
 
-- Conta AWS com credenciais configuradas
+- Conta AWS
 - Terraform >= 1.0
 - Docker + Docker Compose
 - Ansible
