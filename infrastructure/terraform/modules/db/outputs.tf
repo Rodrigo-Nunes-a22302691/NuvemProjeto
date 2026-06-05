@@ -1,6 +1,6 @@
 output "db_endpoint" {
-  description = "Endpoint de ligação ao RDS"
-  value       = aws_db_instance.main.endpoint
+  description = "Endpoint de ligação ao RDS (sem porta)"
+  value       = aws_db_instance.main.address
 }
 
 output "db_name" {
