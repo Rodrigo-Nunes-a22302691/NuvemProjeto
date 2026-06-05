@@ -56,3 +56,20 @@ module "sqs" {
   environment = "dev"
   queue_name  = "order-created"
 }
+
+
+
+
+
+
+
+
+output "db_endpoint" {
+  description = "Endpoint do RDS"
+  value       = module.db.db_endpoint
+}
+
+output "sqs_queue_url" {
+  description = "URL da fila SQS"
+  value       = module.sqs.queue_url
+}
