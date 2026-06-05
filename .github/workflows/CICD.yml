@@ -71,6 +71,9 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     needs: test
+    outputs:
+      db_host: ${{ steps.tf_outputs.outputs.db_host }}
+      sqs_url: ${{ steps.tf_outputs.outputs.sqs_url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,6 +102,13 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform -chdir=infrastructure/terraform apply -auto-approve
+
+      - name: Get Terraform outputs
+        id: tf_outputs
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "db_host=$(terraform -chdir=infrastructure/terraform output -raw db_endpoint)" >> $GITHUB_OUTPUT
+          echo "sqs_url=$(terraform -chdir=infrastructure/terraform output -raw sqs_queue_url)" >> $GITHUB_OUTPUT
 
 
 
@@ -141,18 +151,19 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.sha }}
           
-
-
-
-
-
-
-
-
+          
+            
+            
+            
+            
+            
+            
+            
+            
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, terraform]
     if: github.ref == 'refs/heads/main'
     environment: production
 
@@ -180,7 +191,7 @@ jobs:
         run: |
           ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/deploy.yml \
             -e "dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}" \
-            -e "db_host=${{ secrets.DB_HOST }}" \
+            -e "db_host=${{ needs.terraform.outputs.db_host }}" \
             -e "db_username=${{ secrets.DB_USERNAME }}" \
             -e "db_password=${{ secrets.DB_PASSWORD }}" \
-            -e "sqs_queue_url=${{ secrets.SQS_QUEUE_URL }}"
+            -e "sqs_queue_url=${{ needs.terraform.outputs.sqs_url }}"
