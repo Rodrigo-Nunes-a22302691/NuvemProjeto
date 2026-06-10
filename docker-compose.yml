@@ -38,7 +38,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 500M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:5432/microservices
@@ -57,7 +57,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 500M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -84,7 +84,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 500M
     environment:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -113,7 +113,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 500M
     depends_on:
       - user-service
       - product-service
